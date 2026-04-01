@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>내 그림 퍼즐</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: 'Noto Sans KR', sans-serif;
     background: linear-gradient(135deg, #fff9f0 0%, #fff0f9 100%);
@@ -15,18 +15,8 @@
     align-items: center;
     padding: 24px 16px;
   }
-  h1 {
-    font-size: 28px;
-    color: #d85a30;
-    margin-bottom: 6px;
-    text-align: center;
-  }
-  .subtitle {
-    font-size: 15px;
-    color: #888;
-    margin-bottom: 24px;
-    text-align: center;
-  }
+  h1 { font-size: 28px; color: #d85a30; margin-bottom: 6px; text-align: center; }
+  .subtitle { font-size: 15px; color: #888; margin-bottom: 24px; text-align: center; }
   .card {
     background: white;
     border-radius: 20px;
@@ -44,148 +34,100 @@
     cursor: pointer;
     transition: background 0.2s;
     margin-bottom: 16px;
+    background-size: cover;
+    background-position: center;
   }
-  .upload-area:hover { background: #fff5f0; }
+  .upload-area:hover { background-color: #fff5f0; }
   .upload-icon { font-size: 48px; margin-bottom: 8px; }
   .upload-label { font-size: 16px; color: #d85a30; font-weight: 600; }
   .upload-sub { font-size: 13px; color: #aaa; margin-top: 4px; }
   #fileInput { display: none; }
-  .controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
+  .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
   .controls label { font-size: 15px; color: #555; font-weight: 600; }
   .size-btn {
-    padding: 8px 18px;
-    border-radius: 30px;
-    border: 2px solid #f0997b;
-    background: white;
-    color: #d85a30;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
+    padding: 8px 18px; border-radius: 30px; border: 2px solid #f0997b;
+    background: white; color: #d85a30; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
   }
-  .size-btn.active, .size-btn:hover {
-    background: #d85a30;
-    color: white;
-    border-color: #d85a30;
-  }
+  .size-btn.active, .size-btn:hover { background: #d85a30; color: white; border-color: #d85a30; }
   .start-btn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 30px;
-    border: none;
+    width: 100%; padding: 14px; border-radius: 30px; border: none;
     background: linear-gradient(135deg, #d85a30, #f0997b);
-    color: white;
-    font-size: 18px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    margin-top: 4px;
+    color: white; font-size: 18px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
   }
   .start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .start-btn:hover:not(:disabled) { opacity: 0.9; }
 
   #gameArea { display: none; width: 100%; max-width: 560px; }
-  .game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
+  .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
   .game-title { font-size: 18px; font-weight: 700; color: #d85a30; }
   .hint-toggle {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 2px solid #d85a30;
-    background: white;
-    color: #d85a30;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
+    padding: 6px 14px; border-radius: 20px; border: 2px solid #d85a30;
+    background: white; color: #d85a30; font-size: 13px; font-weight: 600; cursor: pointer;
   }
   .reset-btn {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 2px solid #378add;
-    background: white;
-    color: #378add;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
+    padding: 6px 14px; border-radius: 20px; border: 2px solid #378add;
+    background: white; color: #378add; font-size: 13px; font-weight: 600; cursor: pointer;
   }
-  .boards {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
+  .hint-img { border-radius: 12px; border: 2px solid #ddd; display: none; margin-bottom: 12px; max-width: 100%; }
+  .hint-img.visible { display: block; }
+
+  #puzzleContainer {
+    position: relative;
+    margin: 0 auto;
+    touch-action: none;
   }
-  .board-wrap { text-align: center; }
-  .board-label { font-size: 13px; color: #aaa; margin-bottom: 6px; }
-  .puzzle-board {
+  .puzzle-grid {
     display: grid;
     gap: 3px;
     background: #eee;
     border-radius: 12px;
     padding: 3px;
-    user-select: none;
   }
+  .puzzle-cell {
+    border-radius: 8px;
+    position: relative;
+    background: #f0f0f0;
+    border: 2px dashed #ddd;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .puzzle-cell.correct { border: 2px solid #63992260; background: #eaf3de; }
+  .puzzle-cell.over { border-color: #f0997b; background: #fff5f0; }
+
   .puzzle-piece {
+    position: absolute;
+    top: 0; left: 0;
+    border-radius: 7px;
     background-size: cover;
-    border-radius: 8px;
     cursor: grab;
-    transition: transform 0.1s, box-shadow 0.1s;
-    border: 2px solid transparent;
+    transition: box-shadow 0.1s, transform 0.1s;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
-  .puzzle-piece:hover { transform: scale(1.04); box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
-  .puzzle-piece.dragging { opacity: 0.5; cursor: grabbing; }
-  .puzzle-piece.correct { border-color: #63992210; }
-
-  .drop-zone {
+  .puzzle-piece.dragging {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    transform: scale(1.08);
+    cursor: grabbing;
+    z-index: 1000;
+    position: fixed;
     border-radius: 8px;
-    border: 2.5px dashed #ccc;
-    background: #f9f9f9;
-    transition: background 0.15s, border-color 0.15s;
   }
-  .drop-zone.over { background: #fff5f0; border-color: #f0997b; }
-  .drop-zone.filled { border: none; }
-  .drop-zone.correct-slot { border-color: #63992260; background: #eaf3de; }
-
-  .hint-img {
-    border-radius: 12px;
-    border: 2px solid #ddd;
-    display: none;
-  }
-  .hint-img.visible { display: block; }
+  .puzzle-piece.correct { border: 2px solid #63992280; }
 
   .win-banner {
-    display: none;
-    text-align: center;
-    padding: 24px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-    margin-top: 16px;
-    max-width: 560px;
-    width: 100%;
+    display: none; text-align: center; padding: 24px; background: white;
+    border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    margin-top: 16px; max-width: 560px; width: 100%;
   }
   .win-banner.show { display: block; }
   .win-emoji { font-size: 52px; }
   .win-text { font-size: 24px; font-weight: 700; color: #d85a30; margin: 8px 0 4px; }
   .win-sub { font-size: 15px; color: #888; margin-bottom: 16px; }
   .again-btn {
-    padding: 12px 28px;
-    border-radius: 30px;
-    border: none;
+    padding: 12px 28px; border-radius: 30px; border: none;
     background: linear-gradient(135deg, #d85a30, #f0997b);
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
+    color: white; font-size: 16px; font-weight: 700; cursor: pointer;
   }
   canvas { display: none; }
 </style>
@@ -201,20 +143,18 @@
     <div class="upload-label">사진 올리기</div>
     <div class="upload-sub">클릭하거나 사진을 여기에 끌어다 놓으세요</div>
   </div>
-  <input type="file" id="fileInput" accept="image/*">
-
+  <input type="file" id="fileInput" accept="image/*" capture="environment">
   <div class="controls">
     <label>조각 수:</label>
-    <button class="size-btn active" data-size="3" onclick="selectSize(this, 3)">3×3</button>
-    <button class="size-btn" data-size="4" onclick="selectSize(this, 4)">4×4</button>
-    <button class="size-btn" data-size="5" onclick="selectSize(this, 5)">5×5</button>
+    <button class="size-btn active" onclick="selectSize(this, 3)">3×3</button>
+    <button class="size-btn" onclick="selectSize(this, 4)">4×4</button>
+    <button class="size-btn" onclick="selectSize(this, 5)">5×5</button>
   </div>
-
   <button class="start-btn" id="startBtn" onclick="startGame()" disabled>퍼즐 시작!</button>
 </div>
 
 <div id="gameArea">
-  <div class="card" style="padding: 16px;">
+  <div class="card" style="padding:16px;">
     <div class="game-header">
       <span class="game-title">퍼즐 맞추기</span>
       <div style="display:flex;gap:8px;">
@@ -222,18 +162,10 @@
         <button class="reset-btn" onclick="resetGame()">다시하기</button>
       </div>
     </div>
-
     <img id="hintImg" class="hint-img" alt="원본 그림">
-
-    <div class="boards">
-      <div class="board-wrap">
-        <div class="board-label">조각 조각 (여기서 가져가세요)</div>
-        <div class="puzzle-board" id="pieceBoard"></div>
-      </div>
-      <div class="board-wrap">
-        <div class="board-label">완성 판 (여기에 맞춰보세요)</div>
-        <div class="puzzle-board" id="dropBoard"></div>
-      </div>
+    <p style="font-size:13px;color:#aaa;margin-bottom:10px;text-align:center;">조각을 길게 눌러서 원하는 자리에 놓으세요!</p>
+    <div id="puzzleContainer">
+      <div class="puzzle-grid" id="puzzleGrid"></div>
     </div>
   </div>
 </div>
@@ -250,10 +182,12 @@
 <script>
 let gridSize = 3;
 let imageDataUrl = null;
-let pieces = [];
-let slots = [];
-let dragPiece = null;
-let dragFrom = null;
+let pieceSize = 90;
+let order = [];
+let dragEl = null;
+let dragOriginCell = null;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
 
 function selectSize(btn, size) {
   document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
@@ -261,21 +195,15 @@ function selectSize(btn, size) {
   gridSize = size;
 }
 
-const fileInput = document.getElementById('fileInput');
-const uploadArea = document.getElementById('uploadArea');
-const startBtn = document.getElementById('startBtn');
-
-fileInput.addEventListener('change', e => {
+document.getElementById('fileInput').addEventListener('change', e => {
   const file = e.target.files[0];
-  if (!file) return;
-  loadImage(file);
+  if (file) loadImage(file);
 });
 
-uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.background = '#fff5f0'; });
-uploadArea.addEventListener('dragleave', () => { uploadArea.style.background = ''; });
+const uploadArea = document.getElementById('uploadArea');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); });
 uploadArea.addEventListener('drop', e => {
   e.preventDefault();
-  uploadArea.style.background = '';
   const file = e.dataTransfer.files[0];
   if (file && file.type.startsWith('image/')) loadImage(file);
 });
@@ -290,7 +218,7 @@ function loadImage(file) {
     uploadArea.querySelector('.upload-icon').textContent = '✅';
     uploadArea.querySelector('.upload-label').textContent = '이미지 업로드 완료!';
     uploadArea.querySelector('.upload-sub').textContent = '다른 사진을 올리려면 다시 클릭하세요';
-    startBtn.disabled = false;
+    document.getElementById('startBtn').disabled = false;
   };
   reader.readAsDataURL(file);
 }
@@ -304,11 +232,12 @@ function startGame() {
 }
 
 function buildPuzzle() {
-  const pieceSize = Math.min(Math.floor(480 / gridSize / 2), 90);
-  const totalSize = pieceSize * gridSize;
+  const maxW = Math.min(window.innerWidth - 64, 520);
+  pieceSize = Math.floor((maxW - (gridSize + 1) * 3) / gridSize);
 
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
+  const totalSize = pieceSize * gridSize;
   canvas.width = totalSize;
   canvas.height = totalSize;
 
@@ -319,122 +248,183 @@ function buildPuzzle() {
     const sy = (img.height - side) / 2;
     ctx.drawImage(img, sx, sy, side, side, 0, 0, totalSize, totalSize);
 
-    pieces = [];
+    const pieceDataUrls = [];
     for (let r = 0; r < gridSize; r++) {
       for (let c = 0; c < gridSize; c++) {
         const pc = document.createElement('canvas');
         pc.width = pieceSize;
         pc.height = pieceSize;
         pc.getContext('2d').drawImage(canvas, c * pieceSize, r * pieceSize, pieceSize, pieceSize, 0, 0, pieceSize, pieceSize);
-        pieces.push({ id: r * gridSize + c, dataUrl: pc.toDataURL(), row: r, col: c });
+        pieceDataUrls.push(pc.toDataURL());
       }
     }
 
-    const hintImg = document.getElementById('hintImg');
-    hintImg.src = canvas.toDataURL();
-    hintImg.style.width = totalSize + 'px';
-    hintImg.style.height = totalSize + 'px';
+    document.getElementById('hintImg').src = canvas.toDataURL();
 
-    renderBoards(pieceSize);
+    order = Array.from({length: gridSize * gridSize}, (_, i) => i);
+    while (order.every((v, i) => v === i)) {
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+    }
+
+    renderGrid(pieceDataUrls);
   };
   img.src = imageDataUrl;
 }
 
-function renderBoards(pieceSize) {
-  const pieceBoard = document.getElementById('pieceBoard');
-  const dropBoard = document.getElementById('dropBoard');
-  pieceBoard.style.gridTemplateColumns = `repeat(${gridSize}, ${pieceSize}px)`;
-  dropBoard.style.gridTemplateColumns = `repeat(${gridSize}, ${pieceSize}px)`;
-  pieceBoard.innerHTML = '';
-  dropBoard.innerHTML = '';
+function renderGrid(pieceDataUrls) {
+  const grid = document.getElementById('puzzleGrid');
+  grid.style.gridTemplateColumns = `repeat(${gridSize}, ${pieceSize}px)`;
+  grid.style.gridTemplateRows = `repeat(${gridSize}, ${pieceSize}px)`;
+  grid.innerHTML = '';
 
-  const shuffled = [...pieces].sort(() => Math.random() - 0.5);
+  const container = document.getElementById('puzzleContainer');
+  const totalSize = pieceSize * gridSize + (gridSize + 1) * 3 + 6;
+  container.style.width = totalSize + 'px';
 
-  shuffled.forEach((p, i) => {
-    const el = document.createElement('div');
-    el.className = 'puzzle-piece';
-    el.style.width = pieceSize + 'px';
-    el.style.height = pieceSize + 'px';
-    el.style.backgroundImage = `url(${p.dataUrl})`;
-    el.dataset.id = p.id;
-    el.dataset.location = 'piece';
-    el.draggable = true;
-    addDragEvents(el);
-    pieceBoard.appendChild(el);
-  });
-
-  slots = [];
   for (let i = 0; i < gridSize * gridSize; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'drop-zone';
-    slot.style.width = pieceSize + 'px';
-    slot.style.height = pieceSize + 'px';
-    slot.dataset.slotId = i;
-    addDropEvents(slot);
-    dropBoard.appendChild(slot);
-    slots.push(slot);
+    const cell = document.createElement('div');
+    cell.className = 'puzzle-cell';
+    cell.style.width = pieceSize + 'px';
+    cell.style.height = pieceSize + 'px';
+    cell.dataset.cellId = i;
+
+    const pieceId = order[i];
+    const piece = document.createElement('div');
+    piece.className = 'puzzle-piece';
+    piece.style.width = pieceSize + 'px';
+    piece.style.height = pieceSize + 'px';
+    piece.style.backgroundImage = `url(${pieceDataUrls[pieceId]})`;
+    piece.dataset.pieceId = pieceId;
+
+    cell.appendChild(piece);
+    grid.appendChild(cell);
+
+    if (pieceId === i) cell.classList.add('correct');
+
+    addPieceEvents(piece, pieceDataUrls);
   }
 }
 
-function addDragEvents(el) {
-  el.addEventListener('dragstart', e => {
-    dragPiece = el;
-    dragFrom = el.parentElement;
-    setTimeout(() => el.classList.add('dragging'), 0);
-    e.dataTransfer.effectAllowed = 'move';
-  });
-  el.addEventListener('dragend', () => {
-    el.classList.remove('dragging');
-    dragPiece = null;
-    dragFrom = null;
-  });
-}
+function addPieceEvents(piece, pieceDataUrls) {
+  let startX, startY, moved;
 
-function addDropEvents(slot) {
-  slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('over'); });
-  slot.addEventListener('dragleave', () => slot.classList.remove('over'));
-  slot.addEventListener('drop', e => {
-    e.preventDefault();
-    slot.classList.remove('over');
-    if (!dragPiece) return;
+  function onStart(cx, cy) {
+    moved = false;
+    startX = cx;
+    startY = cy;
+    dragEl = piece;
+    dragOriginCell = piece.parentElement;
 
-    const existing = slot.querySelector('.puzzle-piece');
+    const rect = piece.getBoundingClientRect();
+    dragOffsetX = cx - rect.left;
+    dragOffsetY = cy - rect.top;
 
-    if (existing) {
-      if (dragFrom && dragFrom.classList.contains('drop-zone') && dragFrom !== slot) {
-        dragFrom.appendChild(existing);
-        dragFrom.classList.add('filled');
-        checkSlotCorrect(dragFrom);
-      } else {
-        document.getElementById('pieceBoard').appendChild(existing);
-        existing.dataset.location = 'piece';
+    piece.classList.add('dragging');
+    piece.style.left = (rect.left) + 'px';
+    piece.style.top = (rect.top) + 'px';
+    piece.style.width = pieceSize + 'px';
+    piece.style.height = pieceSize + 'px';
+    document.body.appendChild(piece);
+  }
+
+  function onMove(cx, cy) {
+    if (!dragEl) return;
+    moved = true;
+    dragEl.style.left = (cx - dragOffsetX) + 'px';
+    dragEl.style.top = (cy - dragOffsetY) + 'px';
+
+    document.querySelectorAll('.puzzle-cell').forEach(c => c.classList.remove('over'));
+    const target = getCellAt(cx, cy);
+    if (target) target.classList.add('over');
+  }
+
+  function onEnd(cx, cy) {
+    if (!dragEl) return;
+    document.querySelectorAll('.puzzle-cell').forEach(c => c.classList.remove('over'));
+
+    const target = getCellAt(cx, cy);
+    if (target && target !== dragOriginCell) {
+      const targetPiece = target.querySelector('.puzzle-piece');
+      dragEl.classList.remove('dragging');
+      dragEl.style.position = 'absolute';
+      dragEl.style.left = '0';
+      dragEl.style.top = '0';
+
+      if (targetPiece) {
+        dragOriginCell.appendChild(targetPiece);
+        targetPiece.style.position = 'absolute';
+        targetPiece.style.left = '0';
+        targetPiece.style.top = '0';
+        checkCell(dragOriginCell);
       }
+      target.appendChild(dragEl);
+      checkCell(target);
+    } else {
+      dragEl.classList.remove('dragging');
+      dragEl.style.position = 'absolute';
+      dragEl.style.left = '0';
+      dragEl.style.top = '0';
+      dragOriginCell.appendChild(dragEl);
     }
 
-    slot.appendChild(dragPiece);
-    slot.classList.add('filled');
-    dragPiece.dataset.location = 'slot';
-    checkSlotCorrect(slot);
+    dragEl = null;
+    dragOriginCell = null;
     checkWin();
+  }
+
+  piece.addEventListener('mousedown', e => {
+    e.preventDefault();
+    onStart(e.clientX, e.clientY);
   });
+  document.addEventListener('mousemove', e => { if (dragEl === piece) onMove(e.clientX, e.clientY); });
+  document.addEventListener('mouseup', e => { if (dragEl === piece) onEnd(e.clientX, e.clientY); });
+
+  piece.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    onStart(t.clientX, t.clientY);
+  }, { passive: false });
+  piece.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    onMove(t.clientX, t.clientY);
+  }, { passive: false });
+  piece.addEventListener('touchend', e => {
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    onEnd(t.clientX, t.clientY);
+  }, { passive: false });
 }
 
-function checkSlotCorrect(slot) {
-  const piece = slot.querySelector('.puzzle-piece');
-  const slotId = parseInt(slot.dataset.slotId);
-  if (piece && parseInt(piece.dataset.id) === slotId) {
-    slot.classList.add('correct-slot');
+function getCellAt(x, y) {
+  const cells = document.querySelectorAll('.puzzle-cell');
+  for (const cell of cells) {
+    const r = cell.getBoundingClientRect();
+    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return cell;
+  }
+  return null;
+}
+
+function checkCell(cell) {
+  const piece = cell.querySelector('.puzzle-piece');
+  const cellId = parseInt(cell.dataset.cellId);
+  if (piece && parseInt(piece.dataset.pieceId) === cellId) {
+    cell.classList.add('correct');
     piece.classList.add('correct');
   } else {
-    slot.classList.remove('correct-slot');
+    cell.classList.remove('correct');
     if (piece) piece.classList.remove('correct');
   }
 }
 
 function checkWin() {
-  const allCorrect = slots.every(slot => {
-    const piece = slot.querySelector('.puzzle-piece');
-    return piece && parseInt(piece.dataset.id) === parseInt(slot.dataset.slotId);
+  const cells = document.querySelectorAll('.puzzle-cell');
+  const allCorrect = Array.from(cells).every(cell => {
+    const piece = cell.querySelector('.puzzle-piece');
+    return piece && parseInt(piece.dataset.pieceId) === parseInt(cell.dataset.cellId);
   });
   if (allCorrect) {
     setTimeout(() => {
@@ -459,8 +449,8 @@ function toggleHint() {
 function resetGame() {
   document.getElementById('hintImg').classList.remove('visible');
   document.querySelector('.hint-toggle').textContent = '힌트 보기';
-  buildPuzzle();
   document.getElementById('winBanner').classList.remove('show');
+  buildPuzzle();
 }
 
 function resetAll() {
@@ -474,7 +464,7 @@ function resetAll() {
   ua.querySelector('.upload-icon').textContent = '📷';
   ua.querySelector('.upload-label').textContent = '사진 올리기';
   ua.querySelector('.upload-sub').textContent = '클릭하거나 사진을 여기에 끌어다 놓으세요';
-  startBtn.disabled = true;
+  document.getElementById('startBtn').disabled = true;
 }
 </script>
 </body>
